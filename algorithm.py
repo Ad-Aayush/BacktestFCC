@@ -29,6 +29,7 @@ def initialize(context):
     # Extract stock symbols from filenames (remove '.csv' extension)
     stock_symbols = [os.path.splitext(f)[0] for f in csv_files]
     print(stock_symbols)
+    
     # Create Zipline symbols for all stocks
     context.stock_universe = symbols(*stock_symbols)
     
@@ -39,13 +40,16 @@ def initialize(context):
     # Initialize variables
     context.stock_list = []  # List to hold selected stocks
     context.day_count = 0  # Counter to manage the holding period
-    context.portfolio_weights = {}  # Dictionary to store portfolio weights
+    
+    # Initialize dataframe to store NAV, stock names, and prices
+    dates = pd.date_range(start='2013-10-01', end='2023-08-10', freq='B')  # Business days between start and end date
+    columns = ['NAV'] + [f'Ticker_{i}' for i in range(1, 51)] + [f'Price_{i}' for i in range(1, 51)]
+    context.nav_data = pd.DataFrame(index=dates, columns=columns)
+    context.nav_data = context.nav_data.fillna(0)  # Initializing with zeros
+
 
 
 def handle_data(context, data):
-    for stock in context.stock_universe:
-        volume = data.current(stock, 'volume')
-        print("Volume of {} on {}: {}".format(stock.symbol, data.current_session, volume))
     context.day_count += 1
     
     # If the holding period is over, liquidate all positions
@@ -59,11 +63,6 @@ def handle_data(context, data):
     if context.day_count == 0:
         prices = data.history(context.stock_universe, 'price', context.lookback, '1d')
         returns = (prices.iloc[-1] - prices.iloc[0]) / prices.iloc[0]
-        
-        # Debug: Print prices and returns
-        # print("Prices:\n", prices.head())
-        # print("Returns:\n", returns.head())
-        
         top_stocks = returns.nlargest(50).index
         context.stock_list = top_stocks
         
@@ -72,40 +71,30 @@ def handle_data(context, data):
             for stock in context.stock_list:
                 order_target_percent(stock, 1.0 / len(context.stock_list))
             
-            # Store portfolio weights
+            # Store selected stocks and their current prices in nav_data DataFrame
             date = data.current_session
-            context.portfolio_weights[date] = {stock.symbol: 1.0 / len(context.stock_list) for stock in context.stock_list}
+            context.nav_data.at[date, 'NAV'] = context.portfolio.portfolio_value
+            for i, stock in enumerate(context.stock_list, start=1):
+                context.nav_data.at[date, f'Ticker_{i}'] = stock.symbol
+                context.nav_data.at[date, f'Price_{i}'] = data.current(stock, 'price')
         else:
             print("No stocks selected for rebalance on", data.current_session)
-        # open_orders = open_orders()
-        # if open_orders:
-        #     print("Open Orders on {}: {}".format(data.current_session, open_orders))
+
         
 
 
 
 
 def analyze(context, perf):
-    # Creating DataFrame for portfolio weights
-    weights_df = pd.DataFrame.from_dict(context.portfolio_weights, orient='index')
-    
-    # Creating DataFrame for NAV output
-    nav_df = pd.DataFrame({'Date': perf.index.tz_localize(None), 'NAV': perf.portfolio_value})
-    
-    # Merging NAV and portfolio weights
-    output_df = pd.merge(nav_df, weights_df, left_on='Date', right_index=True, how='left')
-    
-    # Filling NaN values with 0 (for days when no rebalance happened)
-    output_df.fillna(0, inplace=True)
-    
-    # Saving to Excel
-    output_df.to_excel('nav_output.xlsx', index=False)
+    # Save the nav_data DataFrame to Excel
+    context.nav_data = context.nav_data[context.nav_data.NAV != 0]  # Remove rows with no trades
+    context.nav_data.to_excel('nav_output.xlsx')
 
 
 # Run the backtest
 if __name__ == '__main__':
     start_date = pd.Timestamp('2013-10-01')
-    end_date = pd.Timestamp('2014-2-1')
+    end_date = pd.Timestamp('2013-12-1')
 
 
     result = run_algorithm(
