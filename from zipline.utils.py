@@ -8,7 +8,9 @@ xbom_cal = ecals.get_calendar("XBOM")
 start_date = pd.Timestamp("2012-07-02")
 end_date = pd.Timestamp("2023-08-10")
 
-# Get the valid trading sessions as strings
+# Get the valid 
+# 
+# trading sessions as strings
 trading_sessions_str = xbom_cal.sessions_in_range(start_date, end_date).astype(str)
 
 # Convert back to Timestamp objects with timezone information
