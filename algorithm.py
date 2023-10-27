@@ -28,13 +28,13 @@ def initialize(context):
     
     # Extract stock symbols from filenames (remove '.csv' extension)
     stock_symbols = [os.path.splitext(f)[0] for f in csv_files]
-    print(stock_symbols)
+    # print(stock_symbols)
     
     # Create Zipline symbols for all stocks
     context.stock_universe = symbols(*stock_symbols)
     
     # Define parameters
-    context.lookback = 20  # Lookback period in days
+    context.lookback = 21  # Lookback period in days
     context.holding_period = 5  # Holding period in days
     
     # Initialize variables
@@ -42,7 +42,7 @@ def initialize(context):
     context.day_count = 0  # Counter to manage the holding period
     
     # Initialize dataframe to store NAV, stock names, and prices
-    dates = pd.date_range(start='2013-10-01', end='2023-08-10', freq='B')  # Business days between start and end date
+    dates = pd.date_range(start='2012-10-01', end='2023-08-10', freq='B')  # Business days between start and end date
     columns = ['NAV'] + [f'Ticker_{i}' for i in range(1, 51)] + [f'Price_{i}' for i in range(1, 51)]
     context.nav_data = pd.DataFrame(index=dates, columns=columns)
     context.nav_data = context.nav_data.fillna(0)  # Initializing with zeros
@@ -93,8 +93,8 @@ def analyze(context, perf):
 
 # Run the backtest
 if __name__ == '__main__':
-    start_date = pd.Timestamp('2013-10-01')
-    end_date = pd.Timestamp('2013-12-1')
+    start_date = pd.Timestamp('2012-10-01')
+    end_date = pd.Timestamp('2023-08-10')
 
 
     result = run_algorithm(
