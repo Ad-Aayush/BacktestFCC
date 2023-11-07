@@ -96,6 +96,8 @@ def analyze(context, perf):
     # print(context.nav_data)
     # Save the nav_data DataFrame to Excel
     context.nav_data = context.nav_data[context.nav_data.NAV != 0]  # Remove rows with no trades
+    os.mkdir('Results', exist_ok=True)
+    os.chdir('Results')
     name = 'Lookback_' + str(context.lookback) + '_Holding_' + str(context.holding_period)
     context.nav_data.to_excel(name+'.xlsx')
 
