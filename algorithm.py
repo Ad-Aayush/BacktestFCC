@@ -75,7 +75,7 @@ def handle_data(context, data):
         if len(context.stock_list) > 0:
             # Allocate equal weight to each stock
             for stock in context.stock_list:
-                order_target_percent(stock, 1.0 / len(context.stock_list))
+                order_target_percent(stock, 1.0 / len(context.stock_list)) # Equal proportion to each stock
             
             # Store selected stocks and their current prices in nav_data DataFrame
             date = data.current_session
@@ -115,5 +115,5 @@ if __name__ == '__main__':
         handle_data=handle_data,
         analyze=analyze,
         bundle='my_custom_bundle',
-        capital_base=10000,
+        capital_base=10_00_000,
     )
