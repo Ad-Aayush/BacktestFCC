@@ -27,19 +27,18 @@ First, the organized Excel files must be integrated with Zipline; the code for t
 
 ## Analysis of the Results
 
-Ranking the strategies based on final portfolio value:
+| Holding Period | Lookback | CAGR (in %) | Drawdown (in %)   |
+|----------------|----------|-------------|-------------------|
+| 1 Month        | 1 Month  | 31.87       | 67.93             |
+| 1 Week         | 1 Month  | 23.81       | 75.53             |
+| 1 Week         | 6 Months | 43.05       | 47.20             |
+| 1 Week         | 3 Months | 38.56       | 57.85             |
+| 1 Week         | 12 Months| 46.96       | 44.90             |
+| 1 Month        | 6 Months | 47.04       | 42.39             |
+| 1 Month        | 12 Months| 49.15       | 38.74             |
+| 1 Month        | 3 Months | 42.73       | 50.67             |
+| 1 Week         | 1 Week   | 24.25       | 57.39             |
 
-| File Name                   | CAGR (in %) | Drawdown (in %)   |
-|-----------------------------|-------------|-------------------|
-| Lookback_21_Holding_21.xlsx | 31.87       | 67.93             |
-| Lookback_21_Holding_7.xlsx  | 23.81       | 75.53             |
-| Lookback_126_Holding_7.xlsx | 43.05       | 47.20             |
-| Lookback_63_Holding_7.xlsx  | 38.56       | 57.85             |
-| Lookback_252_Holding_7.xlsx | 46.96       | 44.90             |
-| Lookback_126_Holding_21.xlsx| 47.04       | 42.39             |
-| Lookback_252_Holding_21.xlsx| 49.15       | 38.74             |
-| Lookback_63_Holding_21.xlsx | 42.73       | 50.67             |
-| Lookback_7_Holding_7.xlsx   | 24.25       | 57.39             |
 
 
 Most strategies on the top have a longer (1 Month) Holding Period. Among these, the one with a higher Look Back performs better. The longer the look back period, the lower the maximum drawdown of the strategy.
